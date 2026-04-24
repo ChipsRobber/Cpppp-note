@@ -1,0 +1,547 @@
+初始化方法
+(value)
+={value}
+{value}
+
+列表初始化禁止缩窄转换（虽然测试发现好像只会警告）
+
+<3.4.3>
+浮点常量默认是double类型
+
+<4.2.x>
+cin.get(str,len) 会保留换行符在输入流中
+cin.getline(str,len) 不会保留换行符在输入流中，读取到的换行符将被替换为'\0'
+
+<4.3.4>
+String 类接受一行输入使用getline(cin,str)函数来进行
+
+<4.6>
+在不进行强制类型转换的情况下，只能将定义枚举时使用的枚举量赋给这种枚举的变量（而C语言没有这种限制，可以使用整型赋给枚举变量）
+
+<4.10>
+vector 动态数组
+array 静态数组
+
+<5.1.1>
+表达式+; => 语句
+语句 !=> 表达式+;
+
+<5.1.7>
+对于内置类型，++/--采用前缀还是后缀没有区别，但对于用户定义的类型，前缀效率更高
+
+<5.1.8>
+曾经争论过的运算符优先级问题，实际上作者的表述与++/--和*均为从右向左结合且优先级相同是一样的
+真是令人怀念的时光
+
+<5.2.2>
+cin.get(char)读取单个字符，因为cin << char会略过空白字符，而cin.get(char)不会
+
+<5.5.5>
+cin.get()几乎等同于getchar()
+
+<6.2.6>
+可以使用 not, and, or 代替!, &&, ||
+
+<7.3.5>
+在需要的时候尽可能使用const，不然的话没有使用const的指针形参只能处理非const数据
+参见const指针的赋值规则
+
+<7.4>
+对于多维数组，例如：
+int a[3][4];
+是这样解释的，a是一个大小为3的数组，而每个数组元素是大小为4的数组，因此a是一个指向指针的指针,a+1每次会加int [4]的大小。
+
+<7.9>
+C语言允许main函数调用自己，而C++不可以
+
+<8.1>
+inline函数
+
+<8.2.3>
+非左值或类型不正确不能赋值给非const引用变量
+只有const引用变量可以生成临时变量用于存储
+结尾提了右值引用&&
+
+<8.2.6>
+基类引用可以指向派生类对象，而无需进行强制转换
+基类引用可以接受基类对象，也可以接受派生类对象
+
+<8.4>
+如果一个函数调用有多种可以转换的函数重载，该调用视为报错
+函数类型引用和类型本身视为同一个特征标
+对于const特征标，只有const有效时，才会被视为特征标
+const int与int是重定义，因为int本身就不会被修改（按值传递）
+const *int与*int,
+const &int与&int
+是重载，因为int会被修改所以const能发挥效果
+
+<8.5.3>
+优先级：
+非模版函数 > 显式具体化函数模版 > 函数模版
+
+<8.5.4>
+函数模版
+template <typename T> foo(T arg)
+显式实例化
+template foo<int>(int arg)
+在声明函数模版的情况下，以特定类型调用函数模版就是隐式实例化
+显式具体化
+template <> foo(int arg)
+template <> foo<int>(int arg)
+代码中显式实例化
+int m;
+double x;
+swap<double>(m,x)
+显式实例化一个double swap函数，m将强制转换为double，但是由于为double引用，不能指向int，所以该代码不会完成预期的效果
+
+<8.5.5>
+const和非const之间的区别只适用于指针和引用指向的数据
+出现两个完全匹配的函数，但不会出问题的两种例外：
+    1. const和非const指针或引用，此时const优先匹配const，非const优先匹配非const
+    2. 一个是非模版函数，一个是模版函数，非模版函数优先于模版函数（包括显式具体化模版函数）
+       如果两个完全匹配的函数都是模版函数，则较具体的模版函数优先（即显式具体化优先于模版函数隐式生成的具体化）
+
+可以在调用函数时提示编译器该使用普通函数还是模版函数
+swap(a,b)
+swap<>(a,b) //使用模版函数
+swap<int>(a,b) //使用模版函数，并显式要求实例化为int
+
+<8.5.6>
+decltype关键字来表示模版中难以确定的类型
+decltype(x)的各种情况
+1. 如果x是一个没有用括号括起的标识符，那么decltype对应的类型与该标识符的类型相同
+2. 如果x是一个函数调用，则decltype对应的类型与函数的返回类型相同
+3. 如果x是一个左值（也就是括号括起的标识符），则decltype对于指向其类型的引用
+4. 如果前面条件都不满足，则decltype的类型与x（如表达式等）的类型相同
+
+函数后置返回类型：
+auto foo(int x,float y) -> double;
+auto foo(int x,float y) -> decltype(x+y);
+
+<9.1>
+关于存储持续性，作用域，链接性
+<9.2.2>
+register在C++11失去了原有的作用，和auto以前的用途一样了（仅仅只是指出这是一个自动变量）
+<9.2.3>
+静态变量的数量是不会改变的，在整个程序的运行期间存在
+没有显式初始化静态变量的话，值默认被设置为0
+表9.1总结了引入名称空间之前使用的存储特性
+
+<9.2.5>
+可以在函数中使用extern声明引用外部作用域的变量
+同名自动变量将隐藏外部变量，但可以使用名称空间::前缀来引用被隐藏的外部全局变量
+/* Tip: const指针数组声明：const char * const month[12]; */
+
+<9.2.7>
+c-v限定符:
+- const
+- volatile
+mutable运算符
+const全局变量的链接性默认是文件内部的，因为放头文件里如果是外部链接容易导致冲突
+<9.2.8>
+static静态函数在定义和声明上面必须都写
+inline内联函数可以不遵守单定义规则，但要求定义必须全都相同
+编译器通过查看函数声明是否带有static，来决定是在内部寻找定义还是文件外部寻找定义
+<9.2.9>
+extern "C" foo(int);
+extern "C++" foo(int);
+指定语言链接性（如何寻找函数的内部名称）
+<9.2.10>
+C++98：
+new操作符初始化
+int *pi = new int (6);
+C++11新增大括号初始化：
+struct where{double x,; double y; double z;};
+where * one = new where {2.5, 5.3, 7.2};    //C++11
+int * ar = new int [4] {2, 4, 6, 7};        //C++11
+//单值变量（C++11）
+int *pi = new int {1};
+double * pdo = new double {99.99};
+
+原来new和delete是运算符重载的函数
+void * operator new(std::size_t);
+void * operator new[](std::size_t);
+void operator delete(void *);
+void operator delete[](void *);
+似乎可以替换new和delete为其他函数，以适用于不同的类型
+
+定位new运算符（需要#include <new>）
+char buffer1[50];
+char buffer2[500];
+p1 = new (buffer1) chaff;
+p2 = new (buffer2) int[20];
+定位new不需要delete，事实上，他只是返回你交给他的指针然后转为(void *)罢了，
+一种用法是使用定位new把特定数据放到特定地址
+定位new可被重载
+
+<9.3 名称空间>
+概念：
+- 声明区域
+- 潜在作用域
+- 作用域
+名称空间本质是声明了一种新的声明区域
+名称空间可以是全局的，也可以位于另一个名称空间中，但不能位于代码块中，
+因此，在默认情况下，在名称空间中声明的名称的链接性为外部的（除非它引用了常量）
+全局名称空间：'::'
+<9.3.2>
+using 声明将特定名称添加到它所属的声明区域中
+
+using 声明和 using 编译命令的区别：
+using 声明就好像是声明了相应名称一样，而using编译命令则像是在略大于当前声明区域的地方声明，因此会被局部变量覆盖
+总之，using编译命令所引入的名称可以被覆盖
+
+namespace可以嵌套，可以定义别名，对于在namespace中的using编译命令，是可以传递的（A>B&&B>C == A>B&&A>C）
+
+匿名命名空间相当于在该命名空间后面使用using编译命令，即：
+namespace {
+    char c;
+}
+等同于：
+namespace __UNIQUE_NAME_ {
+    char c;
+}
+using namespace __UNIQUE_NAME_;
+且该命名空间内的名称全都是internal链接属性，这与static的全局名称的链接属性是相同的
+（一般的命名空间好像都是external链接属性）
+
+名称空间是可以跨文件的，名称空间相当于一个全新的声明空间，不会被不同文件的隔离
+
+<10.2.3>
+class默认为private访问
+C++对struct进行了扩展，使之拥有和class相同的特性，唯一的区别是struct默认为public访问权限
+
+其定义位于类声明中的函数都将自动成为内联函数
+
+<10.3>
+Type a(); 是一个函数声明，而不是一个无参数的构造函数初始化
+Type a; 才是一个无参数的构造函数初始化，默认构造函数初始化不需要括号
+
+Stock stock2 = Stock(); 与
+Stock1 = Stock();
+不同，第一条语句是初始化，可能会创建临时对象，也可能不会（被编译器优化）
+第二条语句是赋值，将Stock()创建的对象赋予Stock1，总会创建一个临时对象
+
+接受一个参数的构造函数允许使用赋值语法将对象初始化为一个值（该特性可以被关闭）
+
+<10.4>
+在函数的括号后面使用 const 限定符将 this 限定为 const，这样将不能使用 this 来修改对象的值。
+
+<10.6.1>
+在类中定义常量：
+1. 使用枚举enum
+class Bakery
+{
+private:
+    enum {Months = 12};
+    double costs[Months];
+    ...
+2. 使用static
+class Bakery
+{
+private:
+    static const int Months = 12;
+    double costs[Months];
+    ...
+<10.6.2> 作用域内枚举
+enum egg {Small, Medium, Large, Jumbo};
+enum t_shirt{Small, Medium, Large, Xlarge};
+因为egg 的 Small 和 t_shirt 的 Small 位于相同的作用域内，它们将发生冲突。
+新枚举：
+enum class egg {...};
+enum class t_shirt {...};
+（也可以用struct代替class）
+使用枚举名来限定枚举量
+egg choice = egg::Large;
+t_shirt Floyd = t_shirt::Large;
+*作用域内枚举不能像传统枚举那样隐式的转换为int
+
+默认情况下，C++11作用域内枚举的底层类型为int（而C++98取决于实现）
+还提供了一种语法，可以为作用域内枚举指定不同的底层类型
+enum class : short pizza {Small, Medium, Large, XLarge}; //指定底层类型为short，底层类型必须为整型
+在C++11中，该语法也可以用于指定传统枚举的底层类型，如果没有指定，则底层类型取决于实现。
+
+<11.6>
+单参数的构造函数会作为隐式转换该参数类型到该构造函数对应类的方式
+例如：
+Cat(char *);
+提供了隐式转换char*到Cat的方法
+而若想关闭这种自动隐式转换的特性，可以使用explicit关键字声明构造函数：
+explicit Cat(char *);
+这将禁用隐式转换，但不影响你显式进行转换：
+(Cat)meow;
+Cat(meow);
+都是可以的
+
+隐式转换的情况：
+- 将 Stonewt 对象初始化为 double 值时。
+- 将 double 值赋给 Stonewt 对象时。
+- 将 double 值传递给接受 Stonewt 参数的函数时。
+- 返回值被声明为 Stonewt 的函数试图返回 double 值时。
+- 在上述任意一种情况下，使用可转换为 double 类型的内置类型时。
+关于最后一条转换规则，进在转换不存在二义性时，才被允许，如对于Cat(double)，可以赋值int并转为double，但当同时存在Cat(double),Cat(long)时，int可以转换为double或long，就出现了二义性
+
+构造函数只适用于 内置类型 -> 类（char *转换为Cat） 的转换，如果想要反向的转换（Cat转换成char *），需要定义一种特殊的转换函数：
+operator typeName();
+需注意以下几点：
+- 转换函数必须是类方法；
+- 转换函数不能指定返回类型；
+- 转换函数不能有参数。
+当可以被转换为其他类型且没有二义性时，就会转换（包括传参给函数时候）
+甚至连续跨越两次类型转换也是允许的：
+long lnum = cat; //cat只定义了double的转换函数，但double可以被转换为long，因此该赋值可以进行隐式转换
+                 //但如果同时定义了int的转换函数，就会因为具有二义性而拒绝转换
+                 //（int和double都可以被转换为long，但编译器不想承担选择的责任）
+类型转换看起来真的很危险，极易引起难以察觉的错误
+在C++98中，关键字explicit不能用于转换函数，好在C++11消除了这个限制（感谢C++11）
+
+在同时定义了运算符重载和类型转换时，容易造成混乱。
+假设定义了
+friend Cat operator+(const Cat &,const Cat &);
+Cat(double);
+double(Cat);
+Cat cat;
+double num;
+在进行 cat+num 的运算时，就会产生二义性（究竟是将Cat转换为double，还是将double转换为Cat？）
+而如果去掉double(Cat);，则会将num转为Cat并进行重载后的Cat加法运算
+|
+而如果Cat是使用的成员函数进行的加法重载，那么
+cat+num被转换为cat.operator+(num);是可行的，而
+num+cat被转换为num.operator+(num);很明显是不行的，即便有着Cat(double)的转换，C++也不会自动将num转为Cat
+但如果Cat使用的友元函数进行的加法重载，就没有这个问题，num+cat没有问题
+因为自动转换不适用于转换调用成员函数的对象，但适用于函数参数
+[指导建议]尽可能使用友元函数进行运算符重载，以便适应类型转换和num+class等乱七八糟的东西
+class+num的两种实现
+1. 显式定义运算符重载的class+num
+2. 只定义class+class，然后定义隐式的class -> num
+**<11.6.2>讨论了一些有关类自动类型转换的冲突
+
+<12.1>
+static类成员变量只会被创建一份，并被所有类实例共享
+该静态成员变量可以在外面使用类名限定后赋初值（并且不写static关键字）。注意，不能在类声明中初始化静态成员变量
+[注意]：静态数据成员在类声明中声明，在包含类方法的文件中初始化。初始化时使用作用域运算符来
+指出静态成员所属的类。但如果静态成员是整型或枚举型 const，则可以在类声明中初始化。
+
+<something note with phone...>
+
+<13.1>
+成员初始化列表使用复制构造函数，而在构造函数中使用=运算符来初始化成员则是使用成员变量的'='运算符赋值函数
+派生类声明语法（使用公有派生，RatedPlayer是派生类，而TableTennisPlay是基类）：
+class RatedPlayer : public TableTennisPlayer
+{
+...
+};
+
+使用成员初始化列表调用基类构造函数进行初始化：
+derived::derived(type1 x, type2 y) : base(x,y)
+{
+...
+}
+如果省略基类初始化，则调用基类的默认构造函数
+
+公有派生类继承了基类的私有成员和公有接口，但不能直接访问私有成员，只能通过继承的公有接口进行访问
+
+有关派生类构造函数的要点如下：
+- 首先创建基类对象；
+- 派生类构造函数应通过成员初始化列表将基类信息传递给基类构造函数；
+- 派生类构造函数应初始化派生类新增的数据成员。
+
+创建派生类对象时，程序首先调用基类构造函数，然后再调用派生类构造函数。基类构造函数
+负责初始化继承的数据成员；派生类构造函数主要用于初始化新增的数据成员。派生类的构造函数总是调
+用一个基类构造函数。可以使用初始化器列表语法指明要使用的基类构造函数，否则将使用默认的基类构
+造函数。
+派生类对象过期时，程序将首先调用派生类析构函数，然后再调用基类析构函数。
+
+基类指针可以在不进行显式类型转换的情况下指向派生类对象；基类引用可以在不进行显式类型转换的情况下引用派生类对象
+然而，基类指针或引用只能用于调用基类方法
+通常，C++要求引用和指针类型与赋给的类型匹配，但这一规则对继承来说是例外。然而，这种例外
+只是单向的，不可以将基类对象和地址赋给派生类引用和指针
+
+公有继承(is-a)
+保护继承
+私有继承
+
+<13.3>
+通过Virtual关键字声明的类成员函数被称为虚方法，作用是如果方法是通过引用或指针而不是对象来调用，虚方法可以确定该使用哪个方法。如果没有使用Virtual，则根据引用或指针的类型选择方法，如果使用了Virtual，则根据引用或指针指向的对象的类型来选择方法。
+方法在基类中被声明为虚的后，它在派生类中将自动成为虚方法。然而，在派生类声明中使用关
+键字 virtual 来指出哪些函数是虚函数也不失为一个好办法。
+注意，关键字 virtual 只用于类声明的方法原型中，而没有用于方法的定义中
+
+在派生类BrassPlus中调用基类Brass的公有方法：
+void BrassPlus::ViewAcct() const
+{
+...
+    Brass:ViewAcct();   //如果不加作用域解析运算符，编译器将认为ViewAcct是BrassPlus::ViewAcct()
+    cout << ...
+...
+}
+
+将派生类引用或指针转换为基类引用或指针被称为向上强制转换(upcasting)
+向上强制转换是可传递的，也就是说，如果从BrassPlus派生出BrassPlusPlus类，则Brass指针或引用可以引用Brass对象、BrassPlus对象或BrassPlusPlus对象
+相反的过程，将基类指针或引用转换为派生类指针或引用，称为向下强制转换(downcasting)，如果不使用显式类型转换，则向下强制转换是不允许的。
+
+<14.2 私有继承>
+使用公有继承，基类的公有方法将成为派生类的公有方法（保护成员还是保护成员）；
+使用私有继承，基类的公有方法将成为派生类的私有方法；
+
+使用多个基类的多重继承：
+class Student : private std::string, private std::valarray<double>
+{
+public:
+    ...
+};
+
+一般组合的初始化方法
+Student(const char * str, const double * pd, int n)
+    : name(str), scores(pd, n) {}
+私有继承的初始化方法
+Student(const char * str, const double * pd, int n)
+    : std::string(str), std::valarray<double>(pd, n) {}
+
+访问私有继承基类的方法是使用作用域解析运算符
+String::size();
+访问私有继承派生类的基类的方式是对派生类使用强制类型转换为基类
+(String &)*this
+
+在私有继承中，在不进行显式类型转换的情况下，不能将指向派生类的引用或指针赋给基类引用或指针（而公有继承可以）
+原文后面有关于公有继承偶尔也必须使用使用显式类型转换的原因...
+
+继承可以使用保护成员，且可以重新定义虚函数，而包含不能
+
+<14.2.3>
+保护继承是私有继承的变体，保护继承在列出基类时使用关键字protected:
+class Student : protected std::string,
+                protected std::valarray<double>
+{...};
+使用保护继承时，基类的公有成员和保护成员都将成为派生类的保护成员，和私有继承一样，基类的接口在派生类中也是可用的，但在继承层次结构之外是不可用的。
+
+<14.2.3end>
+各种继承方式
+特征                公有继承                保护继承                私有继承
+公有成员变成        派生类的公有成员        派生类的保护成员        派生类的私有成员
+保护成员变成        派生类的保护成员        派生类的保护成员        派生类的私有成员
+私有成员变成        只能通过基类接口访问    只能通过基类接口访问    只能通过基类接口访问
+能否隐式向上转换    是                      是（但只能在派生类中）  否
+
+<14.2.4>
+可用使用using将基类的函数调用包装进派生类的公有函数接口中，或意为基类方法可在派生类公有接口中可用
+还有一种老式方式是将方法名放在派生类的公有部分，这看起来像不包含关键字 using 的 using 声明
+<14.3>
+C++ 默认继承方式是私有继承
+对于公有多重继承，若出现菱形继承（A派生B和C，B和C派生D）
+则D会有两个A的基类实例，当出现冲突时，需要使用作用域解析运算符
+B和C可以虚继承A，即可使得D继承B和C时，B和C共用一个A基类实例
+当多重公有继承具有多个匹配的标识符时，按照优先规则（派生类的标识符优于该派生类的基类）进行匹配，且该匹配规则无视访问规则，即便最匹配的是一个private，也会选择（当然，最后会失败，因为private不能访问）
+
+<14.4 类模版>
+类声明前需要加template <class Type>
+模版类只需要在class前加template <class Type>，而在类外使用类名时需要加<Type>，且函数名前应该加template <class Type>
+模版类也可以作为基类
+Array < Statck<int> > asi;
+对于这种语句，C++98要求使用至少一个空白字符将两个>符号分开，以免和运算符>>混淆。C++11不要求这样做。
+
+1. 隐式实例化
+可以为类模版的类型参数提供默认值，但不能为模版函数的类型参数提供默认值
+但是对于非类型参数提供默认值，对于类模版和函数模版都是有效的
+<14.4.6 模版的具体化>
+编译器在需要对象之前，不会生成类的隐式实例化：
+ArrayTP<double, 30> * pt;       // 一个指针，没有具体的对象所以不会进行实例化
+pt = new ArrayTP<double, 30>;   // 现在需要实例化了
+第二条语句导致编译器生成类定义，并根据该定义创建一个对象。
+
+2. 显式实例化
+当使用关键字 template 并指出所需类型来声明类时，编译器将生成类声明的显式实例化（explicit
+instantiation）。声明必须位于模板定义所在的名称空间中。例如，下面的声明将 ArrayTP<string, 100>声明
+为一个类：
+template class ArrayTP<string, 100>;
+在这种情况下，虽然没有创建或提及类对象，编译器也将生成类声明（包括方法定义）。和隐式实例化
+一样，也将根据通用模板来生成具体化。
+
+3. 显式具体化
+具体化类模板定义的格式如下：
+template <> class Classname<specialized-type-name> { ... };
+早期的编译器可能只能识别早期的格式，这种格式不包括前缀 template<>：
+class Classname<specialized-type-name> { ... };
+要使用新的表示法提供一个专供 const char *类型使用的 SortedArray 模板，可以使用类似于下面的代码：
+template <> class SortedArray<const char *>
+{
+    ...
+};
+
+4．部分具体化
+C++还允许部分具体化（partial specialization），即部分限制模板的通用性。例如，部分具体化可以给
+类型参数之一指定具体的类型：
+// general template
+    template <class T1, class T2> class Pair {...};
+// specialization with T2 set to int
+    template <class T1> class Pair<T1,int> {...};
+关键字 template 后面的<>声明的是没有被具体化的类型参数。因此，上述第二个声明将 T2 具体化为
+int，但 T1 保持不变。注意，如果指定所有的类型，则<>内将为空，这将导致显式具体化：
+// specialization with T1 and T2 set to int
+    template <> class Pair<int, int> {...};
+如果有多个模板可供选择，编译器将使用具体化程度最高的模板。给定上述三个模板，情况如下：
+Pair<double, double> p1;    // use general Pair template
+Pair<double, int> p2;       // use Pair<T1, int> partial specialization
+Pair<int, int> p3;          // use Pair<int, int> explicit specialization
+也可以通过为指针提供特殊版本来部分具体化现有的模板：
+template<class T>   // general version
+class Feeb {...};
+template<class T*>  // pointer partial specialization
+class Feeb {...};   // modified code
+如果提供的类型不是指针，则编译器将使用通用版本；如果提供的是指针，则编译器将使用指针具体化版本：
+Feeb<char> fb1;     // use general Feeb template, T is char
+Feeb<char *> fb2    // use Feeb T* specialization, T is char
+如果没有进行部分具体化，则第二个声明将使用通用模板，将 T 转换为 char *类型。如果进行了部分
+具体化，则第二个声明将使用具体化模板，将 T 转换为 char。
+
+...好多有关类模版嵌套的
+
+<14.10>
+可以使用template<typename T> using <alias> = <type>; 来声明模版别名
+C++中可以使用using <alias> = <type>;来代替typedef <alias-type>;
+
+<15.1>
+友元类的声明位置是没有影响的
+友元成员函数
+class Tv
+{
+    friend void Remote::set_chan(Tv & t, int c);
+    ...
+};
+然而，要使编译器能够处理这条语句，它必须知道 Remote 的定义。否则，它无法知道 Remote 是一个
+类，而 set_chan 是这个类的方法。这意味着应将 Remote 的定义放到 Tv 的定义前面。Remote 的方法提到
+了 Tv 对象，而这意味着 Tv 定义应当位于 Remote 定义之前。避开这种循环依赖的方法是，使用前向声明
+（forward declaration）。为此，需要在 Remote 定义的前面插入下面的语句：
+class Tv;
+这样，排列次序应如下：
+class Tv;           // forward declaration
+class Remote {...};
+class Tv {...};
+能否像下面这样排列呢？
+class Remote;
+class Tv {...};
+class Remote {...};
+答案是不能。原因在于，在编译器在 Tv 类的声明中看到 Remote 的一个方法被声明为 Tv 类的友元之
+前，应该先看到 Remote 类的声明和 set_chan( )方法的声明。
+还有一个麻烦。程序清单 15.1 的 Remote 声明包含了内联代码，例如：
+void onoff(Tv & t) { t.onoff(); }
+由于这将调用 Tv 的一个方法，所以编译器此时必须已经看到了 Tv 类的声明，这样才能知道 Tv 有哪
+些方法，但正如看到的，该声明位于 Remote 声明的后面。这种问题的解决方法是，使 Remote 声明中只包
+含方法声明，并将实际的定义放在 Tv 类之后。这样，排列顺序将如下：
+class Tv;
+class Remote {...};
+class Tv {...};
+// put Remote method definitions here
+Remote 方法的原型与下面类似：
+void onoff(Tv & t);
+
+<15.3>
+异常总是返回一个副本
+<*>
+L - wchar_t
+u - char16_t
+U - char32_t
+u8 - <utf-8>
+R - <raw>
+
+编译指令 using namespace std;
+编译声明 using std:cout;
